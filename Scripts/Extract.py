@@ -2,13 +2,13 @@ import requests
 from bs4 import BeautifulSoup
 import sys
 import os
+import string
 
 # Setting the python path
 config_directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(config_directory)
 
 import config
-
 
 def extractHTML():
     """ 
@@ -32,12 +32,12 @@ def extractHTML():
 
 def createDictCollegeToDepartments(soup):
     """
-    Uses the main HTML and creates a mapping from college names to department names
+    Uses the main HTML and creates a mapping from college names to department names and their respective links
     Args:
         soup (Beautiful Soup): main parsing object from HTML
 
     Returns:
-        Dict{str: str[]}: dictionary with mapping from college names to department names
+        Dict{str: str[(str, str)]}: dictionary with mapping from college names to department names and their respective links
     """
     # Finds the accordion that contains all college names and departments
     div_accordion = soup.find('div', {'id': 'accordion'})
@@ -48,18 +48,19 @@ def createDictCollegeToDepartments(soup):
     # Finds all the departments
     departments = div_accordion.find_all('table')
     
-
     accordion_data = {}  
 
     #Iterate through the header and table elements and build the dictionary that maps schools within UVA to subjects
-    for header, table in zip(colleges, departments):
-        department = header.get_text(strip=True)
-        subject_text = [a.get_text() for a in table.find_all('a')]
-        accordion_data[department] = subject_text
+    for college, department in zip(colleges, departments):
+        college_name = college.get_text(strip=True)
+        departmentList = [(a.get_text(), config.URL + a["href"]) for a in department.find_all('a')]
+        accordion_data[college_name] = departmentList
 
     return accordion_data
 
 
+
 soup = extractHTML()
 dict = createDictCollegeToDepartments(soup)
-print(dict)
+keys = list(dict.keys())
+print(dict[keys[0]])
