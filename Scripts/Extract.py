@@ -81,10 +81,10 @@ def createDictDepartmentToCourses(CollegeToDepartmentDict, CollegeName, departme
     for each in courseNums:
         allCourses = []
         course_name_td = each.find_next_sibling('td', {"class": "CourseName"})
-        # CourseElements = table.find_all('tr', class_=lambda value: value and "SectionTopic" not in value and "SectionTitle" not in value and " AAS5559" in value)
+        # CourseElements = table.find_all('tr', class_=lambda value: value and "SectionTopic" not in value and "SectionTitle" not in value and " AAS3500" in value)
         
         # allCourses = [a.get_text(strip = True) for a in CourseElements if a.get_text(strip = True) != ""]
-        # list.append((course_name_td.get_text(strip=True), parseCourse(allCourses[0], "AAS 2500", "AAS NAME")))
+        # list.append((course_name_td.get_text(strip=True), parseCourse(allCourses[4], "AAS 3500", "AAS NAME")))
 
         if course_name_td:
             course_num = each.get_text(strip=True)
@@ -113,7 +113,7 @@ def parseCourse(courseHTML, courseNum, courseName):
     units_pattern = r'\((.*?)\)'  # Match text inside parentheses for units
     course_availability_pattern = r'([A-Za-z]+)'  # Match "Open" or "Closed"
     course_enrollment_pattern = r'(\d+ \/ \d+)[0-9\/() ]*'  # Match "X / X" format
-    professor_pattern = r'([A-Za-z]+\s[A-Za-z]+[+]?[0-9]?|To Be Announced)(?=[A-Z])'#r'([A-Za-z]+ [A-Z][a-z]+\+?\d?|To Be Announced)' # Match the professor's name
+    professor_pattern = r'([A-Za-z]+\s[A-Za-z ]+[A-Za-z]*?\s?[A-Za-z]*?[+]?[0-9]?|To Be Announced)(?=[A-Z])' # Match the professor's name
     course_time_pattern = r'([A-Za-z]* \d+:\d+[apm ]+- \d+:\d+[apm ]+|TBA)' # Match the course time
     course_location_pattern = r'(.*)'  # Match location
     
