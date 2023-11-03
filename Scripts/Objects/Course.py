@@ -14,3 +14,6 @@ class Course:
 
     def __str__(self):
         return f"Class Name: {self.name}\nCourse Number: {self.course_num}\nID: {self.id}\nSection: {self.section}\nType: {self.class_type}\nCredits: {self.credits}\nAvailability: {self.availability}\nEnrollment: {self.enrollment}\nProfessor: {self.professor}\nTime: {self.time}\nLocation: {self.location}"
+
+    def getCourseName(self):
+        return self.name
