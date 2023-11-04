@@ -4,10 +4,10 @@ import sys
 import os
 import re
 import copy
-from Objects.Course import Course
-from Objects.College import College
-from Objects.Department import Department
-from Objects.UVA import UVA
+from UVAObjects.Course import Course
+from UVAObjects.College import College
+from UVAObjects.Department import Department
+from UVAObjects.UVA import UVA
 
 # Setting the python path
 config_directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -148,26 +148,30 @@ def mapDepartmentToCourses(UVA, CollegeName, departmentName):
     return allCourses
 
 def parseCourse(courseHTML, courseNum, courseName):
-    """_summary_
-
+    """
+    Parses the courseHTML to separate the attributes for to create a Course object
     Args:
-        courseHTML (_type_): _description_
-        courseNum (_type_): _description_
-        courseName (_type_): _description_
+        courseHTML ([td elements]): _description_
+        courseNum (str): course ID (eg: MATH 1000)
+        courseName (str): course name
 
     Returns:
-        _type_: _description_
+        Course: newly created Course object
     """
     course_type_pattern = r'([a-zA-Z]+)' # Match the type of course (eg: discussion)
     credits_pattern = r'\((.*?)\)'  # Match text inside parentheses for credits
     professor_pattern = r'((-|To Be Announced)|([A-Za-z]+ [A-Za-z]+))'   # Match for professor names
     pattern = course_type_pattern + credits_pattern
     
+    # Check if the HTML contains the required attributes
     if (len(courseHTML) == 8):
+        
+        #Set courseHTML elements to strings
         courseElements = []
         for each in courseHTML:
             courseElements.append(each.get_text(strip=True))
     
+        # Seperate the type of course (eg: discussion) and the number of credits (eg: 3 credits)
         match = re.search(pattern, courseElements[2])
         class_type = match.group(1)
         credits = match.group(2)
@@ -175,6 +179,7 @@ def parseCourse(courseHTML, courseNum, courseName):
         courseElements[2] = class_type
         courseElements.insert(3, credits)
 
+        # Check if course is taught by more than one professor
         match = re.finditer(professor_pattern, courseElements[6])
         courseElements[6] = [each.group() for each in match]
 
@@ -209,14 +214,22 @@ def parseCourse(courseHTML, courseNum, courseName):
     # else:
     #     print("No match found in the input string.")
     
-soup = extractHTML(config.URL)
-dict = createDictCollegeToDepartments(soup)
-del dict.colleges["Special Listings and Raw Data"]
-keys = list(dict.colleges.keys())
-for each in keys:
-    for departmentName in dict.colleges[each].getDepartmentNames():
-        if (not mapDepartmentToCourses(dict, each, departmentName)):
-            dict.colleges[each].removeDepartment(departmentName)
-
-        
-print(dict)
+def createUVA():
+    """
+    Generates the master UVA object that contains all colleges, associated departments, and associated courses
+    Returns:
+        UVA: UVA object
+    """
+    # Create a UVA object with mapping to all the colleges and departments
+    soup = extractHTML(config.URL)
+    uvaObject = createDictCollegeToDepartments(soup)
+    del uvaObject.colleges["Special Listings and Raw Data"]
+    
+    # Adds all the courses to each respective department
+    keys = list(uvaObject.colleges.keys())
+    for each in keys:
+        for departmentName in uvaObject.colleges[each].getDepartmentNames():
+            if (not mapDepartmentToCourses(uvaObject, each, departmentName)):
+                uvaObject.colleges[each].removeDepartment(departmentName)
+    
+    return uvaObject
