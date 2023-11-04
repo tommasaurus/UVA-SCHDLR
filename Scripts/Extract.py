@@ -53,75 +53,78 @@ def createDictCollegeToDepartments(soup):
     # Find all the departments
     departments = div_accordion.find_all('table')
     
-    # Master Dictionary
+    # Master Object
     uva = UVA()
-    count = 0
+    
     # Iterate through the header and table elements and build the dictionary that maps schools within UVA to College objects
     for college, department in zip(colleges, departments):
-        # Add colleges to main UVA dictionary
-        count += 1
+        
+        # Add colleges to main UVA object
         college_name = college.get_text(strip=True)
-        uva.addCollege(college_name, new_func(department, college_name))
-        # print(id(uva.colleges["Arts & Sciences Departments"].departments))
-        # if count > 1:
-        #     print("SECOND ID", id(uva.colleges["Arts & Sciences Programs, Seminars, and Institutes"].departments))
-
-    
-    print(len(uva.colleges["Arts & Sciences Programs, Seminars, and Institutes"].departments))
-    # if (id(uva.colleges["Arts & Sciences Departments"].departments) == id(uva.colleges["Arts & Sciences Programs, Seminars, and Institutes"].departments)):
-        # print("TERUEUURUURTUUUERUEURUEU")
+        uva.addCollege(college_name, addDepartmentsToCollege(department, college_name))
+       
     return uva
 
-def new_func(department, college_name):
-    
+def addDepartmentsToCollege(department, college_name):
+    """
+    Adds and creates all department objects and maps them to the given college
+    Args:
+        department (table): table object that holds all the departments
+        college_name (str): name of the college 
+
+    Returns:
+        college: college object that contains all the related department objects
+    """
+    # Create college object to be returned
     tempCollege = copy.deepcopy(College(college_name))
-    #  print(id(tempCollege))
+    
     # Add each department to their respective college
     for a in department.find_all('a'):
         if not a.get_text(strip=True).replace(" ","") == "":
             tempCollege.addDepartment(Department(a.get_text(), config.URL + a["href"]))
     return tempCollege
 
-def createDictDepartmentToCourses(CollegeDictionary, CollegeName, departmentName):
-    """_summary_
-
+def mapDepartmentToCourses(UVA, CollegeName, departmentName):
+    """
+    Adds all the courses available in a given department by sifting through the UVA object
     Args:
-        CollegeToDepartmentDict (_type_): _description_
-        CollegeName (_type_): _description_
-        departmentName (_type_): _description_
+        UVA (UVA): UVA master object
+        CollegeName (Str): The name of the college that the department is in
+        departmentName (Str): The name of the department to add classes to 
 
     Returns:
-        _type_: _description_
+        [Course]: List of courses within the department
     """
     # Retrieve the department URL from the given dictionary using the college name and department name
-    departmentURl = CollegeDictionary.colleges[CollegeName].getDepartment(departmentName).getURL()
+    departmentURl = UVA.colleges[CollegeName].getDepartment(departmentName).getURL()
     
-    # Retrieve the table element containing all the courses from the departmentHTML
+    # Retrieve the departmentHTML from the given url
     departmentHTML = extractHTML(departmentURl)
     if (departmentHTML == None):
-        return 
-        
+        return False
+
+    # Retrieve the table element containing all the courses from the departmentHTML    
     table = departmentHTML.find("body").find('table', {'cellspacing': '0'})
-    
     if (table == None):
-        print("THIS DEPARTMENT HAS NO COURSES: ", departmentName, "COLLEGE NAME: ", CollegeName)
-        return 
+        return False
 
     # Retrieve all elements with course IDs (eg: MATH1000) in the given department
     courseIDs = table.find_all('td', {"class": "CourseNum"})
     if (courseIDs == None):
-        return
-    # List of courses for each department
-    allCourses = CollegeDictionary.colleges[CollegeName].getDepartment(departmentName).getCourses()
+        return False
+
+    # List of course objects for each department object
+    allCourses = UVA.colleges[CollegeName].getDepartment(departmentName).getCourses()
 
     for course in courseIDs:
-        # Find the name of course associated with the course ID
+        # Find the name of course associated with the course ID element
         course_name_td = course.find_next_sibling('td', {"class": "CourseName"})
 
         if course_name_td:
+            # Get the actual course ID (eg: MATH1000)
             course_num = course.get_text(strip=True)
             
-            # Retrieve list of sections within each course
+            # Retrieve list of section elements within each course
             courseSections = table.find_all('tr', class_=lambda value: value and "SectionTopic" not in value and "SectionTitle" not in value and (" " + course_num.replace(" ","")) in value)
             
             for section in courseSections:
@@ -129,7 +132,7 @@ def createDictDepartmentToCourses(CollegeDictionary, CollegeName, departmentName
                 
                 if (sectionHTML != ""):
                     
-                    # Check if section has a name
+                    # Check if section has a special name
                     prev = section.find_previous_sibling()                    
                     try: 
                         if "SectionTopic" in prev["class"][0]:
@@ -137,7 +140,7 @@ def createDictDepartmentToCourses(CollegeDictionary, CollegeName, departmentName
                     except(Exception):
                         course_name = course_name_td.get_text(strip=True)
 
-                    # Retrieve all section-related information (td elements)
+                    # Retrieve all section-related information (td elements) and add them to the courses
                     courseElements = section.find_all('td')
                     if len(courseElements) > 7:
                         allCourses.append((course_num, parseCourse(courseElements, course_num, course_name)))
@@ -208,21 +211,12 @@ def parseCourse(courseHTML, courseNum, courseName):
     
 soup = extractHTML(config.URL)
 dict = createDictCollegeToDepartments(soup)
-# createDictDepartmentToCourses(dict, "Arts & Sciences Departments", "African-American & African Studies")
-# # (len(dict)
-# print(dict.colleges['Arts & Sciences Departments'].departments[0].getCourseNames())
-count = 0
+del dict.colleges["Special Listings and Raw Data"]
 keys = list(dict.colleges.keys())
-print(len(keys))
 for each in keys:
-    #  print(each)
-    #  print(len(dict[each].departments))
-    #  print(dict[each].getDepartmentNames())
-    print("NEW COLLEGEEEEEE")
     for departmentName in dict.colleges[each].getDepartmentNames():
-        createDictDepartmentToCourses(dict, each, departmentName)
-        count += 1
-        print(count) 
-    if count == 136:
-        print()
+        if (not mapDepartmentToCourses(dict, each, departmentName)):
+            dict.colleges[each].removeDepartment(departmentName)
+
+        
 print(dict)

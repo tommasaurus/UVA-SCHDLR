@@ -24,5 +24,8 @@ class College:
     def addDepartment(self, department):
         self.departments.append(department)
 
+    def removeDepartment(self, departmentName):
+        self.departments.remove(self.getDepartment(departmentName))
+
     def getClasses(self, departmentName):
         return self.getDepartment(departmentName).getClasses()
