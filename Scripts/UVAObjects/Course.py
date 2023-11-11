@@ -26,7 +26,3 @@ class Course:
 
     def getCourseName(self):
         return self.name
-
-
-temp = Course("Intro to math", "MATH 1000", "10000", "101","Lecture","3","Open","0/20","Professor Qu","TuTh 11:00am - 12:15pm", "New Cabell")
-print(temp.time)
