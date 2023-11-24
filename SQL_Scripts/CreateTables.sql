@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS Colleges (id INT PRIMARY KEY, college_name VARCHAR(255) UNIQUE);
+CREATE TABLE IF NOT EXISTS Departments (id INT PRIMARY KEY, department_name VARCHAR(255), college INT, FOREIGN KEY (college) REFERENCES Colleges(id));
+CREATE TABLE IF NOT EXISTS Courses (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255), course_code VARCHAR(10), course_id INT, section VARCHAR(10), class_type VARCHAR(20), credits INT, availability VARCHAR(20), enrollment_status VARCHAR(20), professor VARCHAR(100), time VARCHAR(50), location VARCHAR(255), department_id INT, FOREIGN KEY (department_id) REFERENCES Departments(id));
+CREATE TABLE IF NOT EXISTS Students (id INT AUTO_INCREMENT PRIMARY KEY, student_username VARCHAR(50) UNIQUE, password VARCHAR(255));
+CREATE TABLE IF NOT EXISTS Schedule (id INT AUTO_INCREMENT PRIMARY KEY, student_username VARCHAR(50), FOREIGN KEY (student_username) REFERENCES Students(student_username), student_schedule INT, UNIQUE KEY (student_username, student_schedule));
+CREATE TABLE IF NOT EXISTS Schedule_Interface ( schedule_id INT, FOREIGN KEY (schedule_id) REFERENCES Schedule(id), course_id INT, FOREIGN KEY (course_id) REFERENCES Courses(id), PRIMARY KEY (schedule_id, course_id));
