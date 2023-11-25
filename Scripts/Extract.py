@@ -114,7 +114,8 @@ def mapDepartmentToCourses(UVA, CollegeName, departmentName):
         return False
 
     # List of course objects for each department object
-    allCourses = UVA.colleges[CollegeName].getDepartment(departmentName).getCourses()
+    allCourses = copy.deepcopy(Department(departmentName, departmentURl))
+    # allCourses = UVA.colleges[CollegeName].getDepartment(departmentName).getCourses()
 
     for course in courseIDs:
         # Find the name of course associated with the course ID element
@@ -143,8 +144,9 @@ def mapDepartmentToCourses(UVA, CollegeName, departmentName):
                     # Retrieve all section-related information (td elements) and add them to the courses
                     courseElements = section.find_all('td')
                     if len(courseElements) > 7:
-                        allCourses.append((course_num, parseCourse(courseElements, course_num, course_name)))
-            
+                        allCourses.courses.append((course_num, parseCourse(courseElements, course_num, course_name)))
+    index = UVA.colleges[CollegeName].departments.index(UVA.colleges[CollegeName].getDepartment(departmentName))
+    UVA.colleges[CollegeName].departments[index] = allCourses
     return allCourses
 
 def parseCourse(courseHTML, courseNum, courseName):
@@ -181,7 +183,10 @@ def parseCourse(courseHTML, courseNum, courseName):
 
         # Check if course is taught by more than one professor
         match = re.finditer(professor_pattern, courseElements[6])
-        courseElements[6] = [each.group() for each in match]
+        professorList = [each.group() for each in match]
+        if (len(professorList) == 0):
+            professorList.append("To Be Determined")
+        courseElements[6] = professorList
 
         id, section, course_type, credits, availability, enrollment, professor, time, location = courseElements
         
@@ -224,10 +229,12 @@ def createUVA():
     soup = extractHTML(config.URL)
     uvaObject = createDictCollegeToDepartments(soup)
     del uvaObject.colleges["Special Listings and Raw Data"]
+    del uvaObject.colleges["Other Programs, Seminars, and Institutes"]
     
     # Adds all the courses to each respective department
     keys = list(uvaObject.colleges.keys())
-    for each in keys:
+    for each in keys:        
+        print(each)
         for departmentName in uvaObject.colleges[each].getDepartmentNames():
             if (not mapDepartmentToCourses(uvaObject, each, departmentName)):
                 uvaObject.colleges[each].removeDepartment(departmentName)
