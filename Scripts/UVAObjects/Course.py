@@ -2,7 +2,7 @@ import re
 
 class Course:
     def __init__(self, name, course_num, id, section, class_type, credits, availability, enrollment, professor, time, location):
-        self.name = name
+        self.name = name.replace("'","")
         self.course_num = course_num
         self.id = id
         self.section = section
@@ -12,7 +12,7 @@ class Course:
         self.enrollment = enrollment
         self.professor = professor
         self.time = time
-        self.location = location
+        self.location = location.replace("'","")
 
         id_pattern = r'[A-Za-z]*(\d+)'
         id_match = re.search(id_pattern,id).group(1)

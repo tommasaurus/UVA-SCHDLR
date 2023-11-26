@@ -119,18 +119,60 @@ def table_exists(table_name):
         print(f"Error: {err}")
         return False
 
-connection = connect()
-uva = Extract.createUVA()
+def clear():
+    global connection, cursor
+    if connection == None or cursor == None:
+        return "Not Connected to the Database"
+    try:
+        cursor.execute("SET foreign_key_checks = 0;")
+        result = cursor.fetchall()
+        
+        cursor.execute(f"TRUNCATE TABLE {config.database}.Schedule_Interface;")
+        result = cursor.fetchall()
 
-createTables()
-for each in uva.colleges:
-    print(each)
-    addCollege(each)
-    for departments in uva.colleges[each].getDepartments():
-        addDepartment(departments.name, each)
-        for course in departments.getCourses():
-            print(course[1])
-            addCourse(course[1],departments.name)
+        cursor.execute(f"TRUNCATE TABLE {config.database}.Schedule;")
+        result = cursor.fetchall()
+
+        cursor.execute(f"TRUNCATE TABLE {config.database}.Courses;")
+        result = cursor.fetchall()
+
+        cursor.execute(f"TRUNCATE TABLE {config.database}.Departments;")
+        result = cursor.fetchall()
+
+        cursor.execute(f"TRUNCATE TABLE {config.database}.Colleges;")
+        result = cursor.fetchall()
+        
+        cursor.execute("SET foreign_key_checks = 1;")
+        result = cursor.fetchall()
+        return True
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        return False
+
+
+def fillTables():
+    global connection, cursor
+    if connection == None or cursor == None:
+        return "Not Connected to the Database"
+    if table_exists("Colleges") and table_exists("Departments") and table_exists("Courses"):
+        clear()
+    else:
+        createTables()
+        
+    uva = Extract.createUVA()
+    for each in uva.colleges:
+        # print(each)
+        addCollege(each)
+        for departments in uva.colleges[each].getDepartments():
+            addDepartment(departments.name, each)
+            for course in departments.getCourses():
+                # print(course[1])
+                addCourse(course[1], departments.name)
+
+
+connection = connect()
+fillTables()
+clear()
 
 # Close the cursor and connection
 cursor.close()
