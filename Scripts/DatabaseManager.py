@@ -11,6 +11,7 @@ sys.path.append(config_directory)
 import config
 connection = None
 cursor = None
+user = None
 
 def connect():
     """
@@ -248,20 +249,24 @@ def getDepartmentsByCollege(collegeID):
         print("Not Connected to the Database")
         return False     
     
-    query = f"""SELECT
-    UVA_Scheduler.Departments.id AS department_id,
-    UVA_Scheduler.Departments.department_name
-    FROM
-        UVA_Scheduler.Departments
-    JOIN
-        UVA_Scheduler.Colleges ON UVA_Scheduler.Departments.college = UVA_Scheduler.Colleges.id
-    WHERE
-        UVA_Scheduler.Colleges.college_name = '{collegeID}';"""
-    
-    cursor.execute(query)
-    resultSet = cursor.fetchall()
+    try:
+        query = f"""SELECT
+        UVA_Scheduler.Departments.id AS department_id,
+        UVA_Scheduler.Departments.department_name
+        FROM
+            UVA_Scheduler.Departments
+        JOIN
+            UVA_Scheduler.Colleges ON UVA_Scheduler.Departments.college = UVA_Scheduler.Colleges.id
+        WHERE
+            UVA_Scheduler.Colleges.college_name = '{collegeID}';"""
+        
+        cursor.execute(query)
+        resultSet = cursor.fetchall()
 
-    return resultSet
+        return resultSet
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        return False
 
 def getCoursesByDepartment(department):
     global connection, cursor
@@ -269,28 +274,118 @@ def getCoursesByDepartment(department):
         print("Not Connected to the Database")
         return False     
     
-    query = f"""SELECT
-    UVA_Scheduler.Courses.name AS course_name,
-    UVA_Scheduler.Courses.course_code,
-    UVA_Scheduler.Courses.course_id,
-    UVA_Scheduler.Courses.section,
-    UVA_Scheduler.Courses.class_type,
-    UVA_Scheduler.Courses.credits,
-    UVA_Scheduler.Courses.enrollment_status,
-    UVA_Scheduler.Courses.availability,
-    UVA_Scheduler.Courses.professor,
-    UVA_Scheduler.Courses.time,
-    UVA_Scheduler.Courses.location
-    FROM
-        UVA_Scheduler.Courses
-    JOIN
-        UVA_Scheduler.Departments ON UVA_Scheduler.Courses.department_id = UVA_Scheduler.Departments.id
-    WHERE
-        UVA_Scheduler.Departments.department_name = '{department}';"""
+    try:
+        query = f"""SELECT
+        UVA_Scheduler.Courses.name AS course_name,
+        UVA_Scheduler.Courses.course_code,
+        UVA_Scheduler.Courses.course_id,
+        UVA_Scheduler.Courses.section,
+        UVA_Scheduler.Courses.class_type,
+        UVA_Scheduler.Courses.credits,
+        UVA_Scheduler.Courses.enrollment_status,
+        UVA_Scheduler.Courses.availability,
+        UVA_Scheduler.Courses.professor,
+        UVA_Scheduler.Courses.time,
+        UVA_Scheduler.Courses.location
+        FROM
+            UVA_Scheduler.Courses
+        JOIN
+            UVA_Scheduler.Departments ON UVA_Scheduler.Courses.department_id = UVA_Scheduler.Departments.id
+        WHERE
+            UVA_Scheduler.Departments.department_name = '{department}';"""
+        
+        cursor.execute(query)
+        resultSet = cursor.fetchall()
+        return resultSet
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        return False
+
+def createStudent(username, password):
+    global connection, cursor, user
+    if connection == None or cursor == None:
+        print("Not Connected to the Database")
+        return False
     
-    cursor.execute(query)
-    resultSet = cursor.fetchall()
-    return resultSet
+    try:
+        statement = f"INSERT INTO {config.database}.Students(student_username, password) VALUES('{username}','{password}')"
+        cursor.execute(statement)
+        cursor.fetchall()
+        user = username
+        return True
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        return False    
+
+def createScheduleByStudent(username, schedule_name):
+    global connection, cursor, user
+    if connection == None or cursor == None:
+        print("Not Connected to the Database")
+        return False
+    
+    try:
+        statement = f"INSERT INTO {config.database}.Schedule(student_username, student_schedule) VALUES('{username}','{schedule_name}')"
+        cursor.execute(statement)
+        cursor.fetchall()
+        return True
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        return False
+
+def getStudentSchedules(username):
+    global connection, cursor, user
+    if connection == None or cursor == None:
+        print("Not Connected to the Database")
+        return False
+    try:
+        query = f"""SELECT
+        UVA_Scheduler.Schedule.id AS schedule_id,
+        UVA_Scheduler.Schedule.student_schedule
+        FROM
+            UVA_Scheduler.Schedule
+        JOIN
+            UVA_Scheduler.Students ON UVA_Scheduler.Schedule.student_username = UVA_Scheduler.Students.student_username
+        WHERE
+            UVA_Scheduler.Schedule.student_username = '{username}';"""
+        
+        cursor.execute(query)
+        resultSet = cursor.fetchall()
+        return resultSet
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        return False 
+
+def addCoursesToSchedule(schedule_id, course_id):
+    global connection, cursor, user
+    if connection == None or cursor == None:
+        print("Not Connected to the Database")
+        return False
+    statement = f"INSERT INTO {config.database}.Schedule_Interface(schedule_id, course_id) VALUES('{schedule_id}','{course_id}')"
+    cursor.execute(statement)
+    cursor.fetchall()
+    return True
+
+def getCoursesFromSchedule(schedule_id):
+    global connection, cursor, user
+    if connection == None or cursor == None:
+        print("Not Connected to the Database")
+        return False
+    try:
+        query = f"""SELECT
+        UVA_Scheduler.Schedule_Interface.course_id
+        FROM
+            UVA_Scheduler.Schedule_Interface
+        JOIN
+            UVA_Scheduler.Schedule ON UVA_Scheduler.Schedule_Interface.schedule_id = UVA_Scheduler.Schedule.id
+        WHERE
+            UVA_Scheduler.Schedule_Interface.schedule_id = '{schedule_id}';"""
+        
+        cursor.execute(query)
+        resultSet = cursor.fetchall()
+        return resultSet
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        return False 
 
 def close():
     global connection, cursor
@@ -302,10 +397,12 @@ def close():
     return True
 
 
-
-connection = connect()
+connect()
 # fillTables()
-getCoursesByDepartment("Mathematics")
+rs = getCoursesByDepartment("Mathematics")
+for each in rs:
+    print(each)
+close()
 # clear()
 
 # print("UVA\n")
