@@ -1,0 +1,23 @@
+<!-- images/gallery.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Image gallery</title>
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.css">
+    <link rel="stylesheet" href="/static/CSS/style.css">
+</head>
+<body>
+<nav>
+    <a href="{{ url_for('index') }}">Home</a>
+    <a href="{{ url_for('emoji') }}">Emoji</a>
+</nav>
+<h1>Image gallery</h1>
+<div class="gallery rounded">
+    <img src="/static/images/sky_1.png" alt="Cloudy sky." class="rounded">
+    <img src="/static/images/sky_2.png" alt="Sun shining through a cloudy sky." class="rounded">
+    <img src="/static/images/sky_3.png" alt="Sky with almost no clouds." class="rounded">
+</div>
+</body>
+</html>

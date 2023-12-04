@@ -4,10 +4,10 @@ import sys
 import os
 import re
 import copy
-from UVAObjects.Course import Course
-from UVAObjects.College import College
-from UVAObjects.Department import Department
-from UVAObjects.UVA import UVA
+from .UVAObjects.Course import Course
+from .UVAObjects.College import College
+from .UVAObjects.Department import Department
+from .UVAObjects.UVA import UVA
 
 # Setting the python path
 config_directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

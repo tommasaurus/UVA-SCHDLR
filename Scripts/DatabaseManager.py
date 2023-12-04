@@ -2,8 +2,8 @@ import mysql.connector
 import sys
 import os
 import re
-import Extract
-from Scripts.UVAObjects.Course import Course
+from . import Extract
+from .UVAObjects.Course import Course
 
 config_directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(config_directory)
@@ -397,12 +397,12 @@ def close():
     return True
 
 
-connect()
-# fillTables()
-rs = getCoursesByDepartment("Mathematics")
-for each in rs:
-    print(each)
-close()
+# connect()
+# # fillTables()
+# rs = getCoursesByDepartment("Mathematics")
+# for each in rs:
+#     print(each)
+# close()
 # clear()
 
 # print("UVA\n")

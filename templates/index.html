@@ -1,0 +1,75 @@
+<!-- index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Am I HTML already?</title>
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.css">
+    <link rel="stylesheet" href="/static/CSS/style.css">
+</head>
+<body>
+    <h1>Class List</h1>
+    <ul>
+        {% for class_info in classes_data %}
+            <li>{{ class_info }}</li>
+        {% endfor %}
+    </ul>
+    
+    <h1>Hello, World Wide Web!</h1>
+    <p>This is my first website.</p>
+
+    <nav>
+        <a href="{{ url_for('emoji') }}">Emoji</a>
+        <a href="{{ url_for('gallery') }}">Gallery</a>
+    </nav>
+
+    <h2>About me</h2>
+    <p>I'm a Python programmer and a bug collector.</p>
+
+    <h3>Random facts</h3>
+    <p>I don't just <em>like</em> emoji,<br>
+    I <strong>love</strong> emoji!</p>
+    <p>My most-used emoji are:</p>
+    <p>Here's a table of my most-used emoji:</p>
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Emoji</th>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1.</td>
+                <td>🐞</td>
+                <td>Lady Beetle</td>
+            </tr>
+            <tr>
+                <td>2.</td>
+                <td>🐍</td>
+                <td>Snake</td>
+            </tr>
+            <tr>
+                <td>3.</td>
+                <td>👍</td>
+                <td>Thumbs Up Sign</td>
+            </tr>
+        </tbody>
+    </table>
+    <ol>
+        <li>🐞</li>
+        <li>🐍</li>
+        <li>👍</li>
+    </ol>
+
+    <h2>Links</h2>
+    <p>My favorite websites are:</p>
+    <ul>
+        <li><a href="https://www.realpython.com">realpython.com</a></li>
+        <li><a href="https://www.python.org">python.org</a></li>
+        <li><a href="https://www.pypi.org">pypi.org</a></li>
+    </ul>
+</body>
+</html>
