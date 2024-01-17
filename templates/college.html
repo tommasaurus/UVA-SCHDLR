@@ -1,31 +1,29 @@
-<!-- index.html -->
+<!-- college.html -->
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>UVA SCHDLR</title>
+    <title>{{ college_name }}</title>
     <link rel="stylesheet" href="https://cdn.simplecss.org/simple.css">
     <link rel="stylesheet" href="/static/CSS/style.css">
 </head>
+
+<nav>
+    <a href="{{ url_for('index') }}">Home</a>
+</nav>
 
 <body>
     <h1>UVA SCHDLER</h1>
     <p>UVA SCHDLER is an application that lets UVA students to create schedules based on all available UVA course information.</p>
 
-    <h2>College List</h2>
+    <h2>Department List</h2>
     <ul>
-        {% for college in colleges %}
-            <li>{{ college[0] }}</li>
-            <a href="{{ url_for('college_details', college_name=college[0]) }}">{{ college[0] }}</a>
+        {% for department in departments %}
+            <li>{{ department[1] }}</li>
+            <a href="{{ url_for('department_details', department_name=department[1]) }}">{{ department[1] }}</a>
         {% endfor %}
     </ul>
 
-    <nav>
-        <a href="{{ url_for('gallery') }}">Gallery</a>
-    </nav>
-
-    <h2>About me</h2>
-    <p>I'm a UVA college student.</p>
 </body>
 </html>

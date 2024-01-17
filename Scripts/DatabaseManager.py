@@ -387,6 +387,21 @@ def getCoursesFromSchedule(schedule_id):
         print(f"Error: {err}")
         return False 
 
+def getColleges():
+    global connection, cursor, user
+    if connection == None or cursor == None:
+        print("Not Connected to the Database")
+        return False
+    try:
+        query = f"SELECT UVA_Scheduler.Colleges.college_name FROM UVA_Scheduler.Colleges;"
+        
+        cursor.execute(query)
+        resultSet = cursor.fetchall()
+        return resultSet
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        return False 
+
 def close():
     global connection, cursor
     if connection == None or cursor == None:

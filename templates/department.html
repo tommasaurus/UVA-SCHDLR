@@ -1,0 +1,52 @@
+<!-- department.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>{{ department_name }}</title>
+    <link rel="stylesheet" href="/static/CSS/style.css">
+</head>
+<nav>
+    <a href="{{ url_for('index') }}">Home</a>
+</nav>
+
+<body>
+    <h1>UVA SCHDLER</h1>
+    <p>UVA SCHDLER is an application that lets UVA students to create schedules based on all available UVA course information.</p>
+
+    <h2>Course List</h2>
+    
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Code</th>
+            <th>ID</th>
+            <th>Section</th>
+            <th>Class Type</th>
+            <th>Credits</th>
+            <th>Enrollment Status</th>
+            <th>Availability</th>
+            <th>Professor</th>
+            <th>Time</th>
+            <th>Location</th>
+        </tr>
+        {% for course in courses %}
+        <tr>
+            <td>{{ course[0] }}</td>
+            <td>{{ course[1] }}</td>
+            <td>{{ course[2] }}</td>
+            <td>{{ course[3] }}</td>
+            <td>{{ course[4] }}</td>
+            <td>{{ course[5] }}</td>
+            <td>{{ course[6] }}</td>
+            <td>{{ course[7] }}</td>
+            <td>{{ course[8] }}</td>
+            <td>{{ course[9] }}</td>
+            <td>{{ course[10] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</body>
+</html>

@@ -1,5 +1,6 @@
 {
     "python.analysis.extraPaths": [
         "./Scripts/UVAObjects"
-    ]
+    ],
+    "liveServer.settings.port": 5501
 }
