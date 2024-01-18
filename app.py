@@ -38,6 +38,14 @@ def department_details(department_name):
 def gallery():
     return render_template('gallery.html')
 
+@app.route('/schedule')
+def schedule():
+    return render_template('schedule.html')
+
+@app.route('/schedule_template')
+def schedule_template():
+    return render_template('schedule_template.html')
+
 if __name__ == '__main__':
     # Run the Flask application
     app.run(port=5500, debug=True)

@@ -6,6 +6,7 @@
     <meta charset="utf-8">
     <title>UVA SCHDLR</title>
     <link rel="stylesheet" href="https://cdn.simplecss.org/simple.css">
+    <link rel="stylesheet" href="/static/CSS/style2.css">
     <link rel="stylesheet" href="/static/CSS/style.css">
 </head>
 <script src="/static/ImageRotator.js"></script>
@@ -13,6 +14,13 @@
     <h1>UVA SCHDLR</h1>
     <img id="randomImage" src="" alt="Random Image">
     <p>UVA SCHDLR is a web application that simplifies academic planning for University of Virginia (UVA) students. Our platform encompasses all UVA colleges, departments, and courses, allowing students to effortlessly create personalized schedules. With user-friendly logins, real-time course data, and conflict resolution features, the UVA Scheduler eliminates the need for external scheduling tools and ensures that students are always in sync with the latest UVA class offerings. Say goodbye to the hassle of manual scheduling and welcome a streamlined, efficient, and stress-free academic planning experience with the UVA Scheduler.</p>
+
+    <button id="createScheduleButton">Create Schedule</button>
+    <script>
+    document.getElementById("createScheduleButton").onclick = function() {
+    window.location.href = "{{ url_for('schedule_template') }}";
+    };
+    </script>
 
     <h2>College List</h2>
     <ul>
