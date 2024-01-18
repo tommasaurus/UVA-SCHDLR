@@ -20,7 +20,7 @@ a {
 
 .gallery {
     background: rgba(255, 255, 255, 0.2);
-    padding: 1em;
+    padding: 3em;
 }
 
 .rounded {
@@ -28,8 +28,8 @@ a {
 }
 
 .gallery img {
-    margin-right: 0.2em;
-    width: 150px;
+    margin-right: auto;
+    width: 600px;
 }
 
 th, tr:nth-child(even) {

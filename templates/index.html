@@ -8,10 +8,11 @@
     <link rel="stylesheet" href="https://cdn.simplecss.org/simple.css">
     <link rel="stylesheet" href="/static/CSS/style.css">
 </head>
-
+<script src="/static/ImageRotator.js"></script>
 <body>
-    <h1>UVA SCHDLER</h1>
-    <p>UVA SCHDLER is an application that lets UVA students to create schedules based on all available UVA course information.</p>
+    <h1>UVA SCHDLR</h1>
+    <img id="randomImage" src="" alt="Random Image">
+    <p>UVA SCHDLR is a web application that simplifies academic planning for University of Virginia (UVA) students. Our platform encompasses all UVA colleges, departments, and courses, allowing students to effortlessly create personalized schedules. With user-friendly logins, real-time course data, and conflict resolution features, the UVA Scheduler eliminates the need for external scheduling tools and ensures that students are always in sync with the latest UVA class offerings. Say goodbye to the hassle of manual scheduling and welcome a streamlined, efficient, and stress-free academic planning experience with the UVA Scheduler.</p>
 
     <h2>College List</h2>
     <ul>
@@ -22,7 +23,7 @@
     </ul>
 
     <nav>
-        <a href="{{ url_for('gallery') }}">Gallery</a>
+        <a href="{{ url_for('gallery') }}">Rotunda Image Gallery</a>
     </nav>
 
     <h2>About me</h2>

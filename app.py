@@ -34,10 +34,6 @@ def department_details(department_name):
 
     return render_template('department.html', courses=courses, department_name=department_name)
 
-@app.route('/emoji')
-def emoji():
-    return render_template('emoji.html')
-
 @app.route('/gallery')
 def gallery():
     return render_template('gallery.html')
