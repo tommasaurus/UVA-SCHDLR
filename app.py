@@ -1,6 +1,6 @@
 # Import the necessary libraries
-from flask import Flask, render_template
-from Scripts.DatabaseManager import connect, getCoursesFromSchedule, close, getColleges, getDepartmentsByCollege, getCoursesByDepartment
+from flask import Flask, render_template, jsonify, request
+from Scripts.DatabaseManager import connect, getCoursesFromSchedule, close, getColleges, getDepartmentsByCollege, getCoursesByDepartment, getCoursesByID
 
 # Create a Flask application
 app = Flask(__name__)
@@ -45,6 +45,14 @@ def schedule():
 @app.route('/schedule_template')
 def schedule_template():
     return render_template('schedule_template.html')
+
+@app.route('/get-courses-by-id', methods=['GET'])
+def get_courses():
+    connect()
+    course_id = request.args.get('id')
+    result = getCoursesByID(course_id)
+    close()
+    return result
 
 if __name__ == '__main__':
     # Run the Flask application

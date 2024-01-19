@@ -301,6 +301,29 @@ def getCoursesByDepartment(department):
         print(f"Error: {err}")
         return False
 
+def getCoursesByID(id):
+    global connection, cursor
+    if connection == None or cursor == None:
+        print("Not Connected to the Database")
+        return False     
+    
+    try:
+        query = f"""SELECT
+        UVA_Scheduler.Courses.name,
+        UVA_Scheduler.Courses.course_code,
+        UVA_Scheduler.Courses.time
+        FROM
+            UVA_Scheduler.Courses
+		WHERE
+			UVA_Scheduler.Courses.course_id = {id};"""
+        
+        cursor.execute(query)
+        resultSet = cursor.fetchall()
+        return resultSet
+    except mysql.connector.Error as err:
+        print(f"Error: {err}")
+        return False
+
 def createStudent(username, password):
     global connection, cursor, user
     if connection == None or cursor == None:
